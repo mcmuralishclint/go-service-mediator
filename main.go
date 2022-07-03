@@ -7,5 +7,5 @@ import (
 var Config *parser.Config
 
 func main() {
-	Config = parser.Parser()
+	Config = parser.Parser("config/config.yaml")
 }

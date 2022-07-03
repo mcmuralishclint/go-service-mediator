@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 
@@ -13,13 +12,12 @@ type Config struct {
 	Services interface{} `yaml:"services"`
 }
 
-func Parser() *Config {
-	ymlData, err := ioutil.ReadFile("config/config.yaml")
+func Parser(filename string) *Config {
+	ymlData, err := ioutil.ReadFile(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
 	configs := Config{}
 	yaml.Unmarshal(ymlData, &configs)
-	fmt.Println(configs)
 	return &configs
 }
