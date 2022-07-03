@@ -1,5 +1,5 @@
 info:
-  name: "Circles Serices Configs"
+  title: "Circles Serices Configs"
   description: "Sample Configurations"
 services:
   - service1:
