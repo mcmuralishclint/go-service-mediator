@@ -1,0 +1,44 @@
+info:
+  name: "Circles Serices Configs"
+  description: "Sample Configurations"
+services:
+  - service1:
+      name: "Service 1"
+      base_url: "http://service1.com"
+      version:
+        - name: "V1"
+          endpoints:
+            - name: "API 1"
+              url: "/api/v1/posts"
+              verb: "GET"
+              content-type: "JSON"
+            - name: "API 2"
+              url: "/api/v1/posts"
+              verb: "POST"
+              content-type: "JSON"
+        - name: "V2"
+          endpoints:
+            - name: "API 3"
+              url: "/api/v2/posts"
+              verb: "GET"
+              content-type: "JSON"
+            - name: "API 4"
+              url: "/api/v2/posts"
+              verb: "POST"
+              content-type: "JSON"
+  - service2:
+      name: "Service 2"
+      base_url: "http://service2.com"
+      version:
+        - name: "V1"
+          endpoints:
+            - name: "API 1"
+              url: "/api/v1/students"
+              verb: "GET"
+              content-type: "JSON"
+        - name: "V2"
+          endpoints:
+            - name: "API 2"
+              url: "/api/v2/students"
+              verb: "GET"
+              content-type: "JSON"
