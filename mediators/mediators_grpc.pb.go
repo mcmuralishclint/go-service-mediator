@@ -43,21 +43,19 @@ func (c *mediateClient) Mediate(ctx context.Context, in *MediationInput, opts ..
 }
 
 // MediateServer is the server API for Mediate service.
-// All implementations must embed UnimplementedMediateServer
+// All implementations should embed UnimplementedMediateServer
 // for forward compatibility
 type MediateServer interface {
 	Mediate(context.Context, *MediationInput) (*MediationOutput, error)
-	mustEmbedUnimplementedMediateServer()
 }
 
-// UnimplementedMediateServer must be embedded to have forward compatible implementations.
+// UnimplementedMediateServer should be embedded to have forward compatible implementations.
 type UnimplementedMediateServer struct {
 }
 
 func (UnimplementedMediateServer) Mediate(context.Context, *MediationInput) (*MediationOutput, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Mediate not implemented")
 }
-func (UnimplementedMediateServer) mustEmbedUnimplementedMediateServer() {}
 
 // UnsafeMediateServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to MediateServer will

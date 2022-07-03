@@ -2,18 +2,15 @@ syntax = "proto3";
 option go_package="./mediators";
 import "google/protobuf/struct.proto";
 
-service Meidate{
-    rpc Meidate(MediationInput) returns (MediationOutput);
+service Mediate{
+    rpc Mediate(MediationInput) returns (MediationOutput);
 }
 
 message MediationInput{
     string service = 1;
     string version = 2;
     string endpoint = 3;
-    .google.protobuf.Struct body = 4;
-    .google.protobuf.Struct headers = 5;
-    .google.protobuf.Struct queryParams = 6;
-    .google.protobuf.Struct pathParams = 7;
+    .google.protobuf.Struct request_data = 4;
 };
 message MediationOutput{
     .google.protobuf.Struct output = 1;
