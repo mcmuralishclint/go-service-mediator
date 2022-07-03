@@ -9,9 +9,7 @@ on:
     branches:
       - master
       - 'feature/***'
-
 jobs:
-
   test:
     runs-on: ubuntu-latest
     steps:
