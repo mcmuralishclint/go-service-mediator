@@ -10,7 +10,8 @@ message MediationInput{
     string service = 1;
     string version = 2;
     string endpoint = 3;
-    .google.protobuf.Struct request_data = 4;
+    string verb = 4;
+    .google.protobuf.Struct request_data = 5;
 };
 message MediationOutput{
     .google.protobuf.Struct output = 1;

@@ -10,13 +10,6 @@ import (
 	"google.golang.org/grpc"
 )
 
-type RequestData struct {
-	Header     map[string]interface{} `json:"header"`
-	Body       map[string]interface{} `json:"body"`
-	QueryParam map[string]interface{} `json:"queryparam"`
-	PathParam  map[string]interface{} `json:"pathparam"`
-}
-
 func main() {
 	conn, err := grpc.Dial("localhost:4040", grpc.WithInsecure())
 	if err != nil {
@@ -25,20 +18,38 @@ func main() {
 	client := mediators.NewMediateClient(conn)
 	g := gin.Default()
 
-	g.POST("/api/:version/orchestrator/:service/:endpoint", func(ctx *gin.Context) {
+	g.GET("/api/:version/orchestrator/:service/:endpoint", func(ctx *gin.Context) {
 		version := ctx.Param("version")
 		service := ctx.Param("service")
 		endpoint := ctx.Param("endpoint")
+		verb := ctx.Request.Method
 		requestData := structpb.Struct{}
 		err := ctx.ShouldBindJSON(&requestData)
 		if err != nil {
 			log.Fatal("Unable to process endpoint")
 		}
-		req := &mediators.MediationInput{Service: service, Version: version, Endpoint: endpoint, RequestData: &requestData}
+		req := &mediators.MediationInput{Service: service, Version: version, Endpoint: endpoint, Verb: verb, RequestData: &requestData}
 		if response, err := client.Mediate(ctx, req); err == nil {
 			ctx.JSON(http.StatusOK, gin.H{"result": response})
 		}
 	})
+
+	g.POST("/api/:version/orchestrator/:service/:endpoint", func(ctx *gin.Context) {
+		version := ctx.Param("version")
+		service := ctx.Param("service")
+		endpoint := ctx.Param("endpoint")
+		verb := ctx.Request.Method
+		requestData := structpb.Struct{}
+		err := ctx.ShouldBindJSON(&requestData)
+		if err != nil {
+			log.Fatal("Unable to process endpoint")
+		}
+		req := &mediators.MediationInput{Service: service, Version: version, Endpoint: endpoint, Verb: verb, RequestData: &requestData}
+		if response, err := client.Mediate(ctx, req); err == nil {
+			ctx.JSON(http.StatusOK, gin.H{"result": response})
+		}
+	})
+
 	if err := g.Run(":8080"); err != nil {
 		log.Fatalf("Failed to run server: %v", err)
 	}
