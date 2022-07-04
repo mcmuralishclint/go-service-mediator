@@ -45,8 +45,11 @@ func main() {
 			log.Fatal("Unable to process endpoint")
 		}
 		req := &mediators.MediationInput{Service: service, Version: version, Endpoint: endpoint, Verb: verb, RequestData: &requestData}
-		if response, err := client.Mediate(ctx, req); err == nil {
+		response, err := client.Mediate(ctx, req)
+		if err == nil {
 			ctx.JSON(http.StatusOK, gin.H{"result": response})
+		} else {
+			ctx.JSON(http.StatusForbidden, gin.H{"error": err})
 		}
 	})
 
