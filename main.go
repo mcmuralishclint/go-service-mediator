@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -9,11 +10,13 @@ import (
 	"net"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/mcmuralishclint/go-service-mediator/parser"
 	"github.com/mcmuralishclint/go-service-mediator/pb/mediators"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 var Config *parser.Config
@@ -49,7 +52,7 @@ func (s *server) Mediate(ctx context.Context, request *mediators.MediationInput)
 		return &mediators.MediationOutput{}, errors.New("Invalid Request")
 	}
 	fmt.Println(endpoint)
-	MakeHttpCall(endpoint, baseUrl)
+	MakeHttpCall(endpoint, baseUrl, request.GetRequestData())
 	return &mediators.MediationOutput{}, nil
 }
 
@@ -75,16 +78,25 @@ func retreiveConfig(request *mediators.MediationInput) (parser.Endpoint, string,
 	return parser.Endpoint{}, "", errors.New("No config found")
 }
 
-func MakeHttpCall(endpoint parser.Endpoint, baseUrl string) {
-	request := baseUrl + endpoint.Url
-	fmt.Println(request)
-	resp, err := http.Get(request)
-	if err != nil {
-		log.Fatal("Request failed")
+func MakeHttpCall(endpoint parser.Endpoint, baseUrl string, requestData *structpb.Struct) {
+	request_url := baseUrl + endpoint.Url
+	timeout := time.Duration(10 * time.Second)
+	client := http.Client{
+		Timeout: timeout,
 	}
+	request, err := http.NewRequest(endpoint.Verb, request_url, bytes.NewBuffer([]byte{}))
+	request.Header.Set("Content-type", endpoint.ContentType)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	resp, err := client.Do(request)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	log.Println(string(body))
+	fmt.Println(string(body))
 }
