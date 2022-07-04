@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	structpb "github.com/golang/protobuf/ptypes/struct"
 	"github.com/mcmuralishclint/go-service-mediator/pb/mediators"
 	"google.golang.org/grpc"
 )
@@ -29,17 +29,12 @@ func main() {
 		version := ctx.Param("version")
 		service := ctx.Param("service")
 		endpoint := ctx.Param("endpoint")
-		requestData := RequestData{}
+		requestData := structpb.Struct{}
 		err := ctx.ShouldBindJSON(&requestData)
 		if err != nil {
-			fmt.Println("Error when processing endpoint")
-		} else {
-			log.Println(version)
-			log.Println(service)
-			log.Println(endpoint)
-			log.Println(requestData)
+			log.Fatal("Unable to process endpoint")
 		}
-		req := &mediators.MediationInput{Service: service, Version: version, Endpoint: endpoint}
+		req := &mediators.MediationInput{Service: service, Version: version, Endpoint: endpoint, RequestData: &requestData}
 		if response, err := client.Mediate(ctx, req); err == nil {
 			ctx.JSON(http.StatusOK, gin.H{"result": response})
 		}

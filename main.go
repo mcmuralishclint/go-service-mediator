@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -45,13 +46,10 @@ func (s *server) Mediate(ctx context.Context, request *mediators.MediationInput)
 	// service := request.GetService()
 	// version := request.GetVersion()
 	// endpoint := request.GetEndpoint()
-	// requestData := request.GetRequestData()
-	fmt.Println(request)
 	endpoint, baseUrl, err := retreiveConfig(request)
 	if err != nil {
 		return &mediators.MediationOutput{}, errors.New("Invalid Request")
 	}
-	fmt.Println(endpoint)
 	MakeHttpCall(endpoint, baseUrl, request.GetRequestData())
 	return &mediators.MediationOutput{}, nil
 }
@@ -79,12 +77,14 @@ func retreiveConfig(request *mediators.MediationInput) (parser.Endpoint, string,
 }
 
 func MakeHttpCall(endpoint parser.Endpoint, baseUrl string, requestData *structpb.Struct) {
+	body, _ := json.Marshal(requestData.Fields["body"])
+
 	request_url := baseUrl + endpoint.Url
 	timeout := time.Duration(10 * time.Second)
 	client := http.Client{
 		Timeout: timeout,
 	}
-	request, err := http.NewRequest(endpoint.Verb, request_url, bytes.NewBuffer([]byte{}))
+	request, err := http.NewRequest(endpoint.Verb, request_url, bytes.NewBuffer(body))
 	request.Header.Set("Content-type", endpoint.ContentType)
 	if err != nil {
 		log.Fatalln(err)
@@ -94,7 +94,7 @@ func MakeHttpCall(endpoint parser.Endpoint, baseUrl string, requestData *structp
 		log.Fatalln(err)
 	}
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatalln(err)
 	}
