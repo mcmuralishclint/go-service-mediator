@@ -3,22 +3,22 @@ info:
   description: "Sample Configurations"
 services:
   - service1:
-      name: "Service 1"
-      base_url: "http://service1.com"
+      name: "service1"
+      base_url: "http://localhost:8082"
       version:
-        - V1:
+        - version1: "V1"
           endpoints:
             - name: "findAllPosts"
               url: "/api/v1/posts"
               verb: "GET"
               content-type: "JSON"
               endpoint-type: "REST"
-            - name: "API 2"
+            - name: "newPost"
               url: "/api/v1/posts"
               verb: "POST"
               content-type: "JSON"
               endpoint-type: "REST"
-        - V2:
+        - version2: "V2"
           endpoints:
             - name: "findAllPosts"
               url: "/api/v2/posts"
