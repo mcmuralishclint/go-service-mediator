@@ -34,10 +34,18 @@ func main() {
 }
 
 func (s *server) Mediate(ctx context.Context, request *mediators.MediationInput) (*mediators.MediationOutput, error) {
-	service := request.GetService()
-	version := request.GetVersion()
-	endpoint := request.GetEndpoint()
-	requestData := request.GetRequestData()
-	fmt.Println(service, version, endpoint, requestData)
+	// service := request.GetService()
+	// version := request.GetVersion()
+	// endpoint := request.GetEndpoint()
+	// requestData := request.GetRequestData()
+	fmt.Println(request)
+	makeNetworkCall(request)
 	return &mediators.MediationOutput{}, nil
+}
+
+func makeNetworkCall(request *mediators.MediationInput) {
+	for _, service := range Config.Services {
+		fmt.Println(service["service1"].Version)
+	}
+
 }

@@ -9,7 +9,21 @@ import (
 
 type Config struct {
 	Info     interface{} `yaml:"info"`
-	Services interface{} `yaml:"services"`
+	Services []map[string]Service
+}
+
+type Service struct {
+	Name    string                  `yaml:"name"`
+	BaseUrl string                  `yaml:"base_url"`
+	Version []map[string][]Endpoint `yaml:"version"`
+}
+
+type Endpoint struct {
+	Name         string `yaml:"name"`
+	Url          string `yaml:"url"`
+	Verb         string `yaml:"verb"`
+	ContentType  string `yaml:"content-type"`
+	EndpointType string `yaml:"endpoint-type"`
 }
 
 func Parser(filename string) *Config {
